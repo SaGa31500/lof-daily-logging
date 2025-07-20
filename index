@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOF Daily Logging Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+    
+    .header {
+        background: linear-gradient(45deg, #4CAF50, #45a049);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .tabs {
+        display: flex;
+        background: #f5f5f5;
+    }
+    
+    .tab {
+        flex: 1;
+        padding: 15px;
+        text-align: center;
+        background: #e0e0e0;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+    
+    .tab.active {
+        background: white;
+        color: #4CAF50;
+        font-weight: bold;
+    }
+    
+    .form-content {
+        padding: 20px;
+        display: none;
+    }
+    
+    .form-content.active {
+        display: block;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #4CAF50;
+    }
+    
+    textarea {
+        min-height: 60px;
+        resize: vertical;
+    }
+    
+    .task-group {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .task-header {
+        font-weight: bold;
+        color: #4CAF50;
+        margin-bottom: 10px;
+    }
+    
+    .inline-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    
+    .btn {
+        background: #4CAF50;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 20px;
+        transition: background 0.3s;
+    }
+    
+    .btn:hover {
+        background: #45a049;
+    }
+    
+    .btn:active {
+        transform: translateY(1px);
+    }
+    
+    .output {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        font-size: 14px;
+        border: 2px solid #ddd;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .copy-btn {
+        background: #2196F3;
+        margin-top: 10px;
+    }
+    
+    .copy-btn:hover {
+        background: #1976D2;
+    }
+    
+    .date-display {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+        color: #666;
+    }
+    
+    @media (max-width: 600px) {
+        .container {
+            margin: 10px;
+            border-radius: 10px;
+        }
+        
+        .inline-group {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 LOF Daily Logging</h1>
+            <div class="date-display" id="currentDate"></div>
+        </div>
+
+```
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('morning')">Morning</button>
+        <button class="tab" onclick="switchTab('evening')">Evening</button>
+    </div>
+    
+    <!-- Morning Form -->
+    <div id="morning" class="form-content active">
+        <div class="form-group">
+            <label for="energy">Energy Level:</label>
+            <select id="energy">
+                <option value="">Select energy level...</option>
+                <option value="1">1 - Exhausted</option>
+                <option value="2">2 - Very Low</option>
+                <option value="3">3 - Low</option>
+                <option value="4">4 - Below Average</option>
+                <option value="5">5 - Average</option>
+                <option value="6">6 - Above Average</option>
+                <option value="7">7 - Good</option>
+                <option value="8">8 - High</option>
+                <option value="9">9 - Very High</option>
+                <option value="10">10 - Peak Energy</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="time">Available Time:</label>
+            <input type="text" id="time" placeholder="e.g., 4h, 3 hours, 2.5h">
+        </div>
+        
+        <div class="form-group">
+            <label for="mode">Mode:</label>
+            <input type="text" id="mode" placeholder="e.g., productive, recovery, maintenance">
+        </div>
+        
+        <div class="form-group">
+            <label for="lifeFactors">Life Factors:</label>
+            <textarea id="lifeFactors" placeholder="Any family/weather/unexpected factors affecting today..."></textarea>
+        </div>
+        
+        <div class="task-group">
+            <div class="task-header">Task 1</div>
+            <div class="form-group">
+                <input type="text" id="task1" placeholder="Task description...">
+            </div>
+            <div class="inline-group">
+                <div>
+                    <label for="task1Time">Est. Time:</label>
+                    <input type="text" id="task1Time" placeholder="45min, 2h">
+                </div>
+                <div>
+                    <label for="task1Energy">Energy Cost:</label>
+                    <select id="task1Energy">
+                        <option value="">Select...</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="task1Complexity">Complexity:</label>
+                <select id="task1Complexity">
+                    <option value="">Select...</option>
+                    <option value="1">1 - Very Simple</option>
+                    <option value="2">2 - Simple</option>
+                    <option value="3">3 - Moderate</option>
+                    <option value="4">4 - Complex</option>
+                    <option value="5">5 - Very Complex</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="task-group">
+            <div class="task-header">Task 2</div>
+            <div class="form-group">
+                <input type="text" id="task2" placeholder="Task description...">
+            </div>
+            <div class="inline-group">
+                <div>
+                    <label for="task2Time">Est. Time:</label>
+                    <input type="text" id="task2Time" placeholder="45min, 2h">
+                </div>
+                <div>
+                    <label for="task2Energy">Energy Cost:</label>
+                    <select id="task2Energy">
+                        <option value="">Select...</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="task2Complexity">Complexity:</label>
+                <select id="task2Complexity">
+                    <option value="">Select...</option>
+                    <option value="1">1 - Very Simple</option>
+                    <option value="2">2 - Simple</option>
+                    <option value="3">3 - Moderate</option>
+                    <option value="4">4 - Complex</option>
+                    <option value="5">5 - Very Complex</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="task-group">
+            <div class="task-header">Task 3</div>
+            <div class="form-group">
+                <input type="text" id="task3" placeholder="Task description...">
+            </div>
+            <div class="inline-group">
+                <div>
+                    <label for="task3Time">Est. Time:</label>
+                    <input type="text" id="task3Time" placeholder="45min, 2h">
+                </div>
+                <div>
+                    <label for="task3Energy">Energy Cost:</label>
+                    <select id="task3Energy">
+                        <option value="">Select...</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="task3Complexity">Complexity:</label>
+                <select id="task3Complexity">
+                    <option value="">Select...</option>
+                    <option value="1">1 - Very Simple</option>
+                    <option value="2">2 - Simple</option>
+                    <option value="3">3 - Moderate</option>
+                    <option value="4">4 - Complex</option>
+                    <option value="5">5 - Very Complex</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="realityCheck">Reality Check - Does this match energy/time:</label>
+            <select id="realityCheck">
+                <option value="">Select...</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Mostly">Mostly</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="willAvoid">What will I avoid:</label>
+            <textarea id="willAvoid" placeholder="Which task or activity am I most likely to skip..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="derailment">What might derail this:</label>
+            <textarea id="derailment" placeholder="Anticipation of complications, distractions, etc..."></textarea>
+        </div>
+        
+        <button class="btn" onclick="generateMorningOutput()">Generate Morning Log</button>
+        
+        <div id="morningOutput" class="output" style="display: none;"></div>
+        <button id="morningCopyBtn" class="btn copy-btn" style="display: none;" onclick="copyToClipboard('morningOutput')">Copy to Clipboard</button>
+    </div>
+    
+    <!-- Evening Form -->
+    <div id="evening" class="form-content">
+        <div class="form-group">
+            <label for="completed">Completed Tasks:</label>
+            <textarea id="completed" placeholder="What did you actually complete today..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="actualTime">Actual Time Spent:</label>
+            <textarea id="actualTime" placeholder="How long did tasks actually take..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="energyDrain">Energy Drain:</label>
+            <textarea id="energyDrain" placeholder="How draining were the tasks (1-10 scale)..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="maintenanceDone">Maintenance Done:</label>
+            <textarea id="maintenanceDone" placeholder="Unplanned but important stuff completed..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="surpriseTasks">Surprise Tasks:</label>
+            <textarea id="surpriseTasks" placeholder="Unexpected tasks that emerged..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="endEnergy">End Energy:</label>
+            <select id="endEnergy">
+                <option value="">Select end of day energy...</option>
+                <option value="1">1 - Completely Drained</option>
+                <option value="2">2 - Very Tired</option>
+                <option value="3">3 - Tired</option>
+                <option value="4">4 - Below Average</option>
+                <option value="5">5 - Average</option>
+                <option value="6">6 - Above Average</option>
+                <option value="7">7 - Good</option>
+                <option value="8">8 - High</option>
+                <option value="9">9 - Very High</option>
+                <option value="10">10 - Energized</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="priorityType">Priority Type:</label>
+            <select id="priorityType">
+                <option value="">How did you prioritize today...</option>
+                <option value="Algorithmic plans">Algorithmic plans</option>
+                <option value="Real-life prioritization">Real-life prioritization</option>
+                <option value="Mixed">Mixed</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="patternInsight">Pattern Insight:</label>
+            <textarea id="patternInsight" placeholder="What did you learn about your patterns today..."></textarea>
+        </div>
+        
+        <div class="task-group">
+            <div class="task-header">Thought Stream</div>
+            
+            <div class="form-group">
+                <label for="mentalCurrent1">Mental Current 1:</label>
+                <input type="text" id="mentalCurrent1" placeholder="What kept floating into your thoughts...">
+            </div>
+            
+            <div class="form-group">
+                <label for="mentalCurrent2">Mental Current 2:</label>
+                <input type="text" id="mentalCurrent2" placeholder="Second recurring thought...">
+            </div>
+            
+            <div class="form-group">
+                <label for="mentalCurrent3">Mental Current 3:</label>
+                <input type="text" id="mentalCurrent3" placeholder="Third recurring thought...">
+            </div>
+            
+            <div class="form-group">
+                <label for="newInterests">New Interests:</label>
+                <textarea id="newInterests" placeholder="YouTube videos, articles, conversations that keep coming back..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="wantsAttention">Wants Attention:</label>
+                <textarea id="wantsAttention" placeholder="What feels like it wants more attention soon..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="trendIndicator">Trend Indicator:</label>
+                <textarea id="trendIndicator" placeholder="What pattern does this suggest about evolving priorities..."></textarea>
+            </div>
+        </div>
+        
+        <button class="btn" onclick="generateEveningOutput()">Generate Evening Log</button>
+        
+        <div id="eveningOutput" class="output" style="display: none;"></div>
+        <button id="eveningCopyBtn" class="btn copy-btn" style="display: none;" onclick="copyToClipboard('eveningOutput')">Copy to Clipboard</button>
+    </div>
+</div>
+
+<script>
+    // Set current date
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
+    
+    // Tab switching
+    function switchTab(tab) {
+        // Hide all content
+        document.querySelectorAll('.form-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // Remove active from all tabs
+        document.querySelectorAll('.tab').forEach(tabBtn => {
+            tabBtn.classList.remove('active');
+        });
+        
+        // Show selected content and activate tab
+        document.getElementById(tab).classList.add('active');
+        event.target.classList.add('active');
+        
+        // Load morning data into evening if switching to evening
+        if (tab === 'evening') {
+            loadMorningTasksToEvening();
+        }
+    }
+    
+    // Load morning tasks into evening for reference
+    function loadMorningTasksToEvening() {
+        const morningData = JSON.parse(localStorage.getItem('morningData') || '{}');
+        if (Object.keys(morningData).length > 0) {
+            // You could pre-populate some evening fields based on morning data
+            // For now, just store it for reference
+        }
+    }
+    
+    // Generate morning output
+    function generateMorningOutput() {
+        const data = {
+            energy: document.getElementById('energy').value,
+            time: document.getElementById('time').value,
+            mode: document.getElementById('mode').value,
+            lifeFactors: document.getElementById('lifeFactors').value || 'none',
+            task1: document.getElementById('task1').value,
+            task1Time: document.getElementById('task1Time').value,
+            task1Energy: document.getElementById('task1Energy').value,
+            task1Complexity: document.getElementById('task1Complexity').value,
+            task2: document.getElementById('task2').value,
+            task2Time: document.getElementById('task2Time').value,
+            task2Energy: document.getElementById('task2Energy').value,
+            task2Complexity: document.getElementById('task2Complexity').value,
+            task3: document.getElementById('task3').value,
+            task3Time: document.getElementById('task3Time').value,
+            task3Energy: document.getElementById('task3Energy').value,
+            task3Complexity: document.getElementById('task3Complexity').value,
+            realityCheck: document.getElementById('realityCheck').value,
+            willAvoid: document.getElementById('willAvoid').value,
+            derailment: document.getElementById('derailment').value
+        };
+        
+        // Save to localStorage for evening reference
+        localStorage.setItem('morningData', JSON.stringify(data));
+        
+        const output = `Energy = ${data.energy}
+```
+
+Time = ${data.time}
+Mode = ${data.mode}
+Life factors = ${data.lifeFactors}
+
+Task 1 = ${data.task1}
+Est time = ${data.task1Time}
+Energy cost = ${data.task1Energy}
+Complexity = ${data.task1Complexity}
+
+Task 2 = ${data.task2 || ‘none’}
+Est time = ${data.task2Time}
+Energy cost = ${data.task2Energy}
+Complexity = ${data.task2Complexity}
+
+Task 3 = ${data.task3 || ‘none’}
+Est time = ${data.task3Time}
+Energy cost = ${data.task3Energy}
+Complexity = ${data.task3Complexity}
+
+Reality check - Does this match energy/time = ${data.realityCheck}
+What will I avoid = ${data.willAvoid}
+What might derail this = ${data.derailment}`;
+
+```
+        document.getElementById('morningOutput').textContent = output;
+        document.getElementById('morningOutput').style.display = 'block';
+        document.getElementById('morningCopyBtn').style.display = 'block';
+    }
+    
+    // Generate evening output
+    function generateEveningOutput() {
+        const data = {
+            completed: document.getElementById('completed').value,
+            actualTime: document.getElementById('actualTime').value,
+            energyDrain: document.getElementById('energyDrain').value,
+            maintenanceDone: document.getElementById('maintenanceDone').value,
+            surpriseTasks: document.getElementById('surpriseTasks').value,
+            endEnergy: document.getElementById('endEnergy').value,
+            priorityType: document.getElementById('priorityType').value,
+            patternInsight: document.getElementById('patternInsight').value,
+            mentalCurrent1: document.getElementById('mentalCurrent1').value,
+            mentalCurrent2: document.getElementById('mentalCurrent2').value,
+            mentalCurrent3: document.getElementById('mentalCurrent3').value,
+            newInterests: document.getElementById('newInterests').value,
+            wantsAttention: document.getElementById('wantsAttention').value,
+            trendIndicator: document.getElementById('trendIndicator').value
+        };
+        
+        const output = `Reality Check Log:
+```
+
+Completed = ${data.completed}
+Actual time = ${data.actualTime}
+Energy drain = ${data.energyDrain}
+Maintenance done = ${data.maintenanceDone}
+Surprise tasks = ${data.surpriseTasks}
+End energy = ${data.endEnergy}
+Priority type = ${data.priorityType}
+Pattern insight = ${data.patternInsight}
+
+Thought Stream:
+Mental currents =
+
+1. ${data.mentalCurrent1}
+1. ${data.mentalCurrent2}
+1. ${data.mentalCurrent3}
+
+New interests = ${data.newInterests}
+Wants attention = ${data.wantsAttention}
+Trend indicator = ${data.trendIndicator}`;
+
+```
+        document.getElementById('eveningOutput').textContent = output;
+        document.getElementById('eveningOutput').style.display = 'block';
+        document.getElementById('eveningCopyBtn').style.display = 'block';
+    }
+    
+    // Copy to clipboard function
+    async function copyToClipboard(elementId) {
+        const text = document.getElementById(elementId).textContent;
+        try {
+            await navigator.clipboard.writeText(text);
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = 'Copied! ✅';
+            btn.style.background = '#4CAF50';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#2196F3';
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+    }
+    
+    // Auto-save functionality
+    function autoSave() {
+        const formData = {};
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            formData[element.id] = element.value;
+        });
+        localStorage.setItem('dailyLogDraft', JSON.stringify(formData));
+    }
+    
+    // Load saved data on page load
+    function loadSavedData() {
+        const savedData = JSON.parse(localStorage.getItem('dailyLogDraft') || '{}');
+        Object.keys(savedData).forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = savedData[id];
+            }
+        });
+    }
+    
+    // Add auto-save listeners
+    document.addEventListener('input', autoSave);
+    
+    // Load saved data when page loads
+    window.addEventListener('load', loadSavedData);
+</script>
+```
+
+</body>
+</html>
