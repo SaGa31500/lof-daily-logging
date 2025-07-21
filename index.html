@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-```
+
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         line-height: 1.6;
@@ -179,7 +179,7 @@
         }
     }
 </style>
-```
+
 
 </head>
 <body>
@@ -189,7 +189,7 @@
             <div class="date-display" id="currentDate"></div>
         </div>
 
-```
+
     <div class="tabs">
         <button class="tab active" onclick="switchTab('morning')">Morning</button>
         <button class="tab" onclick="switchTab('evening')">Evening</button>
@@ -538,7 +538,7 @@
         localStorage.setItem('morningData', JSON.stringify(data));
         
         const output = `Energy = ${data.energy}
-```
+
 
 Time = ${data.time}
 Mode = ${data.mode}
@@ -563,7 +563,7 @@ Reality check - Does this match energy/time = ${data.realityCheck}
 What will I avoid = ${data.willAvoid}
 What might derail this = ${data.derailment}`;
 
-```
+
         document.getElementById('morningOutput').textContent = output;
         document.getElementById('morningOutput').style.display = 'block';
         document.getElementById('morningCopyBtn').style.display = 'block';
@@ -589,7 +589,7 @@ What might derail this = ${data.derailment}`;
         };
         
         const output = `Reality Check Log:
-```
+
 
 Completed = ${data.completed}
 Actual time = ${data.actualTime}
@@ -611,7 +611,7 @@ New interests = ${data.newInterests}
 Wants attention = ${data.wantsAttention}
 Trend indicator = ${data.trendIndicator}`;
 
-```
+
         document.getElementById('eveningOutput').textContent = output;
         document.getElementById('eveningOutput').style.display = 'block';
         document.getElementById('eveningCopyBtn').style.display = 'block';
@@ -668,7 +668,7 @@ Trend indicator = ${data.trendIndicator}`;
     // Load saved data when page loads
     window.addEventListener('load', loadSavedData);
 </script>
-```
+
 
 </body>
 </html>
