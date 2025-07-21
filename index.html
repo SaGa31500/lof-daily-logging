@@ -538,30 +538,24 @@
         localStorage.setItem('morningData', JSON.stringify(data));
         
         const output = `Energy = ${data.energy}
-
-
-Time = ${data.time}
-Mode = ${data.mode}
-Life factors = ${data.lifeFactors}
-
-Task 1 = ${data.task1}
-Est time = ${data.task1Time}
-Energy cost = ${data.task1Energy}
-Complexity = ${data.task1Complexity}
-
-Task 2 = ${data.task2 || ‘none’}
-Est time = ${data.task2Time}
-Energy cost = ${data.task2Energy}
-Complexity = ${data.task2Complexity}
-
-Task 3 = ${data.task3 || ‘none’}
-Est time = ${data.task3Time}
-Energy cost = ${data.task3Energy}
-Complexity = ${data.task3Complexity}
-
-Reality check - Does this match energy/time = ${data.realityCheck}
-What will I avoid = ${data.willAvoid}
-What might derail this = ${data.derailment}`;
+        Time = ${data.time}
+        Mode = ${data.mode}
+        Life factors = ${data.lifeFactors}
+        Task 1 = ${data.task1}
+        Est time = ${data.task1Time}
+        Energy cost = ${data.task1Energy}
+        Complexity = ${data.task1Complexity}
+        Task 2 = ${data.task2 || ‘none’}
+        Est time = ${data.task2Time}
+        Energy cost = ${data.task2Energy}
+        Complexity = ${data.task2Complexity}
+        Task 3 = ${data.task3 || ‘none’}
+        Est time = ${data.task3Time}
+        Energy cost = ${data.task3Energy}
+        Complexity = ${data.task3Complexity}
+        Reality check - Does this match energy/time = ${data.realityCheck}
+        What will I avoid = ${data.willAvoid}
+        What might derail this = ${data.derailment}`;
 
 
         document.getElementById('morningOutput').textContent = output;
